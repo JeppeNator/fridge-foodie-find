@@ -286,7 +286,7 @@ const FridgeInventory = () => {
       if (!response.ok) throw new Error("Failed to post items");
       toast({
         title: "Matvara tillagd",
-        description: `${newItem.name} har lagds till dina matvaror`,
+        description: `${newItem.name} är tillagd i dina matvaror`,
       });
     }
 
