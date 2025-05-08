@@ -78,6 +78,11 @@ export default {
 						light: '#C4B5FD',
 						DEFAULT: '#9B87F5',
 						dark: '#7E69AB'
+					},
+					red: {
+						light: '#FA6464',
+						DEFAULT: '#FC1703',
+						dark: '#A80202'
 					}
 				}
 			},

@@ -45,11 +45,11 @@ interface CategoryIcon {
   [key: string]: JSX.Element;
 }
 
-const categories = ["Dairy", "Meat", "Vegetables", "Fruits", "Grains", "Other"];
-const units = ["g", "kg", "ml", "liter", "pcs", "tbsp", "tsp", "cup"];
+const categories = ["Mejeri", "Kött", "Grönsaker", "Frukt", "Torrvaror", "Övrigt"];
+const units = ["g", "kg", "ml", "liter", "st"];
 
 const categoryIcons: CategoryIcon = {
-  Dairy: (
+  Mejeri: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="18"
@@ -67,7 +67,7 @@ const categoryIcons: CategoryIcon = {
       <path d="M7 15a6.472 6.472 0 0 1 5 0 6.47 6.47 0 0 0 5 0" />
     </svg>
   ),
-  Meat: (
+  Kött: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="18"
@@ -85,7 +85,7 @@ const categoryIcons: CategoryIcon = {
       <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
     </svg>
   ),
-  Vegetables: (
+  Grönsaker: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="18"
@@ -102,7 +102,7 @@ const categoryIcons: CategoryIcon = {
       <path d="M18 3s-1.76 1.1-2.33 1.66-1 2.04 0 3.05a2.15 2.15 0 0 0 3.05 0c.57-.56 1.66-2.33 1.66-2.33" />
     </svg>
   ),
-  Fruits: (
+  Frukt: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="18"
@@ -124,7 +124,7 @@ const categoryIcons: CategoryIcon = {
       <path d="M13.8 17a4 4 0 0 0 2.2-3.5 4.2 4.2 0 0 0-3-4 4.2 4.2 0 0 0-3 4 4 4 0 0 0 .8 2.5" />
     </svg>
   ),
-  Grains: (
+  Torrvaror: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="18"
@@ -147,7 +147,7 @@ const categoryIcons: CategoryIcon = {
       <path d="M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L16 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z" />
     </svg>
   ),
-  Other: (
+  Övrigt: (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="18"
@@ -215,28 +215,6 @@ const FridgeInventory = () => {
     }
   };
 
-  const addItem = async () => {
-    try {
-      const response = await fetch("http://localhost:5036/api/FridgeItem", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: newItem.name,
-          category: newItem.category,
-          quantity: newItem.quantity,
-          unit: newItem.unit,
-          expiryDate: newItem.expiryDate,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Failed to post items");
-    } catch (error) {
-      console.error("Error fetching items:", error);
-    }
-  };
-
   // Filter items based on search query
   const filteredItems = items.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -285,8 +263,8 @@ const FridgeInventory = () => {
       if (!response.ok) throw new Error("Failed to post items");
 
       toast({
-        title: "Item updated",
-        description: `${newItem.name} has been updated in your fridge`,
+        title: "Matvara uppdaterad",
+        description: `${newItem.name} har blivit uppdaterad`,
       });
     } else {
       // Add new item
@@ -308,8 +286,8 @@ const FridgeInventory = () => {
 
       if (!response.ok) throw new Error("Failed to post items");
       toast({
-        title: "Item added",
-        description: `${newItem.name} has been added to your fridge`,
+        title: "Matvara tillagd",
+        description: `${newItem.name} har lagds till dina matvaror`,
       });
     }
 
@@ -342,8 +320,8 @@ const FridgeInventory = () => {
     if (!response.ok) throw new Error("Failed to delete items");
 
     toast({
-      title: "Item removed",
-      description: `${itemToDelete?.name} has been removed from your fridge`,
+      title: "Matavara borttagen",
+      description: `${itemToDelete?.name} har tagits bort från dina matvaror`,
     });
     await fetchItems();
   };
@@ -376,7 +354,7 @@ const FridgeInventory = () => {
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-6">
         <Refrigerator className="w-6 h-6 text-foodie-green" />
-        <h1 className="foodie-heading">My Fridge</h1>
+        <h1 className="text-xl font-semibold leading-none">Mina matvaror </h1>
       </div>
 
       {/* Search and Add Button */}
@@ -384,7 +362,7 @@ const FridgeInventory = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
-            placeholder="Search items..."
+            placeholder="Sök matvaror..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9"
@@ -406,10 +384,10 @@ const FridgeInventory = () => {
             <Refrigerator className="h-12 w-12 text-gray-300" />
           </div>
           <h3 className="text-lg font-medium text-gray-700 mb-2">
-            Your fridge is empty
+            Du har inga matvaror
           </h3>
           <p className="text-gray-500 mb-4">
-            Add items to your fridge to see them here
+            Lägg till matvaror för att se dem här
           </p>
           <Button
             onClick={handleAddNewClick}
@@ -472,17 +450,17 @@ const FridgeInventory = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editItem ? "Edit Item" : "Add New Item"}
+              {editItem ? "Uppdatera Matvara" : "Lägg Till Ny Matvara"}
             </DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <label htmlFor="name" className="text-sm font-medium">
-                Item Name
+                Matvara
               </label>
               <Input
                 id="name"
-                placeholder="Enter item name"
+                placeholder="Namn på matvara"
                 value={newItem.name || ""}
                 onChange={(e) =>
                   setNewItem({ ...newItem, name: e.target.value })
@@ -493,7 +471,7 @@ const FridgeInventory = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <label htmlFor="category" className="text-sm font-medium">
-                  Category
+                  Kategori
                 </label>
                 <Select
                   value={newItem.category}
@@ -521,7 +499,7 @@ const FridgeInventory = () => {
 
               <div className="grid gap-2">
                 <label htmlFor="expiry" className="text-sm font-medium">
-                  Expiry Date
+                  Bäst före
                 </label>
                 <Input
                   id="expiry"
@@ -537,7 +515,7 @@ const FridgeInventory = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <label htmlFor="quantity" className="text-sm font-medium">
-                  Quantity
+                  Mängd
                 </label>
                 <Input
                   id="quantity"
@@ -556,7 +534,7 @@ const FridgeInventory = () => {
 
               <div className="grid gap-2">
                 <label htmlFor="unit" className="text-sm font-medium">
-                  Unit
+                  Enhet
                 </label>
                 <Select
                   value={newItem.unit}
@@ -586,13 +564,13 @@ const FridgeInventory = () => {
                 setEditItem(null);
               }}
             >
-              Cancel
+              Avbryt
             </Button>
             <Button
               className="bg-foodie-green hover:bg-foodie-green-dark"
               onClick={handleAddOrUpdateItem}
             >
-              {editItem ? "Update Item" : "Add Item"}
+              {editItem ? "Uppdatera matvara" : "Lägg till matvara"}
             </Button>
           </DialogFooter>
         </DialogContent>
