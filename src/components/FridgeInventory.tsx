@@ -3,14 +3,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
@@ -30,6 +28,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import React from "react";
 
 // Types
 interface FridgeItem {
@@ -244,7 +243,7 @@ const FridgeInventory = () => {
 
     if (editItem) {
       // Update existing item
-      let currentItem = items.find(i => i.id === editItem.id);
+      let currentItem = items.find(i => i.id === editItem.id) as FridgeItem;
       const response = await fetch("http://localhost:5036/api/FridgeItem/"+editItem.id, {
         method: "PUT",
         headers: {
@@ -305,7 +304,7 @@ const FridgeInventory = () => {
   };
 
   const handleDeleteItem = async (id: string) => {
-    const itemToDelete = items.find((item) => item.id === id);
+    const itemToDelete = items.find((item) => item.id === id) as FridgeItem;
 
     const response = await fetch("http://localhost:5036/api/FridgeItem/"+itemToDelete.id, {
       method: "DELETE",
@@ -350,6 +349,8 @@ const FridgeInventory = () => {
     setDialogOpen(true);
   };
 
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-6">
@@ -376,6 +377,15 @@ const FridgeInventory = () => {
           <Plus className="h-5 w-5" />
         </Button>
       </div>
+
+      <div><button
+        onClick={() => {
+          setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+        }}
+        className="text-sm bg-gray-200 px-2 py-1 rounded"
+      >
+        Sort: {sortDirection === "desc" ? "↓" : "↑"}
+      </button></div>
 
       {/* No Items State */}
       {filteredItems.length === 0 && (
@@ -406,7 +416,11 @@ const FridgeInventory = () => {
             <h3 className="foodie-subheading">{category}</h3>
           </div>
           <div className="space-y-2">
-            {groupedItems[category].map((item) => (
+            {groupedItems[category].sort((a, b) =>
+              sortDirection === "asc"
+                ? new Date(a.expiryDate).getTime() - new Date(b.expiryDate).getTime()
+                : new Date(b.expiryDate).getTime() - new Date(a.expiryDate).getTime()
+            ).map((item) => (
               <Card key={item.id} className="p-3 flex justify-between items-center">
                 <div className="flex flex-col">
                   <div className="font-medium">{item.name}</div>
@@ -416,8 +430,7 @@ const FridgeInventory = () => {
                     </span>
                     <span className="mx-1">•</span>
                     <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {new Date(item.expiryDate).toLocaleDateString()}
+                      {Math.ceil((new Date(item.expiryDate).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24))} days until expire
                     </span>
                   </div>
                 </div>
