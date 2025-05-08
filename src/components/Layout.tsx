@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Refrigerator, ChefHat, MapPin, ShoppingCart } from "lucide-react";
+import React from "react";
 
 interface LayoutProps {
   children: ReactNode;

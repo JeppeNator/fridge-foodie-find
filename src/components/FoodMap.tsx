@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Search, User, Clock, Info, Store } from "lucide-react";
+import { MapPin, Search, Clock, Edit, Lock } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import {
@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import React from "react";
 
 // Mock location data
 const mockLocations = [
@@ -23,53 +24,53 @@ const mockLocations = [
     address: "Högskolan i Borås",
     distance: 0.8,
     items: [
-        {
-          name:"Gurka",
-          quantity:"1",
-          Category:"Sallad",
-          unit:"st",
-          expiryDate: "2025-05-28"
-        },
-        {
-          name:"Ris",
-          quantity:"100",
-          Category:"Sallad",
-          unit:"korn",
-          expiryDate: "2025-05-09"
-        },
-        {
-          name:"Pasta",
-          quantity:"5",
-          Category:"Sallad",
-          unit:"spagett",
-          expiryDate: "2025-05-12"
-        },
-      ],
+      {
+        name: "Gurka",
+        quantity: "1",
+        Category: "Sallad",
+        unit: "st",
+        expiryDate: "2025-05-28"
+      },
+      {
+        name: "Ris",
+        quantity: "100",
+        Category: "Sallad",
+        unit: "korn",
+        expiryDate: "2025-05-09"
+      },
+      {
+        name: "Pasta",
+        quantity: "5",
+        Category: "Sallad",
+        unit: "spagett",
+        expiryDate: "2025-05-12"
+      },
+    ],
     hours: "09:00 - 12:00",
-    mapLink:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4260.975085651297!2d12.936614277180308!3d57.7251620738776!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x465aa0aee8721f03%3A0xe1fd8213c5fc0bc3!2zSMO2Z3Nrb2xhbiBpIEJvcsOlcw!5e0!3m2!1ssv!2sse!4v1746728034326!5m2!1ssv!2sse"
+    mapLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4260.975085651297!2d12.936614277180308!3d57.7251620738776!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x465aa0aee8721f03%3A0xe1fd8213c5fc0bc3!2zSMO2Z3Nrb2xhbiBpIEJvcsOlcw!5e0!3m2!1ssv!2sse!4v1746728034326!5m2!1ssv!2sse"
   },
   {
     id: "2",
     address: "Centiro",
     distance: 2.3,
     items: [
-        {
-          name:"Kaffe",
-          quantity:"5",
-          Category:"Sallad",
-          unit:"liter",
-          expiryDate: "2025-05-28"
-        },
-        {
-          name:"Köttbullemacka",
-          quantity:"2",
-          Category:"Sallad",
-          unit:"st",
-          expiryDate: "2025-05-10"
-        },
-      ],
+      {
+        name: "Kaffe",
+        quantity: "5",
+        Category: "Sallad",
+        unit: "liter",
+        expiryDate: "2025-05-28"
+      },
+      {
+        name: "Köttbullemacka",
+        quantity: "2",
+        Category: "Sallad",
+        unit: "st",
+        expiryDate: "2025-05-10"
+      },
+    ],
     hours: "15:00 - 17:00",
-    mapLink:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4264.138100583773!2d12.827689377178638!3d57.698296673865954!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46500838065dc9f5%3A0xdbea3dda02f559aa!2sCentiro%20Solutions%20AB!5e0!3m2!1ssv!2sse!4v1746728060507!5m2!1ssv!2sse"
+    mapLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4264.138100583773!2d12.827689377178638!3d57.698296673865954!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46500838065dc9f5%3A0xdbea3dda02f559aa!2sCentiro%20Solutions%20AB!5e0!3m2!1ssv!2sse!4v1746728060507!5m2!1ssv!2sse"
   },
 ];
 
@@ -90,10 +91,10 @@ const daysFromToday = (dateString: string) => {
 const getTypeColor = (expiryDate: string) => {
   let days = daysFromToday(expiryDate)
   console.log(days)
-  if (days < 2){
-      return "bg-foodie-red-light/20 text-foodie-red-dark";
+  if (days < 2) {
+    return "bg-foodie-red-light/20 text-foodie-red-dark";
   }
-  if (days < 6){
+  if (days < 6) {
     return "bg-foodie-orange-light/20 text-foodie-orange-dark";
   }
   return "bg-foodie-green-light/20 text-foodie-green-dark"
@@ -101,10 +102,10 @@ const getTypeColor = (expiryDate: string) => {
 
 const getExpireColor = (expiresIn: number) => {
   console.log(expiresIn)
-  if (expiresIn < 2){
-      return "bg-foodie-red-light/20 text-foodie-red-dark";
+  if (expiresIn < 2) {
+    return "bg-foodie-red-light/20 text-foodie-red-dark";
   }
-  if (expiresIn < 6){
+  if (expiresIn < 6) {
     return "bg-foodie-orange-light/20 text-foodie-orange-dark";
   }
   return "bg-foodie-green-light/20 text-foodie-green-dark"
@@ -228,6 +229,25 @@ const FoodMap = () => {
     setDialogOpen(true);
   };
 
+  const [data, setData] = useState({ name: 'John', age: 30 });
+
+  const updateName = () => {
+    setData(prev => ({ ...prev, name: 'Jane' }));
+  };
+
+  const handleAllocate = (itemToUpdate: FridgeItem) => {
+    const updatedItems = selectedLocation.items.map(item =>
+      item.name === itemToUpdate.name
+        ? { ...item, reserverad: true } // or whatever you want to change
+        : item
+    );
+
+    setSelectedLocation(prev => ({
+      ...prev,
+      items: updatedItems,
+    }));
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-6">
@@ -237,14 +257,14 @@ const FoodMap = () => {
 
       <Tabs defaultValue="donations" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-2 mb-4">
-        <TabsTrigger value="donations" className="data-[state=active]:bg-foodie-green-light/20 data-[state=active]:text-foodie-green">
+          <TabsTrigger value="donations" className="data-[state=active]:bg-foodie-green-light/20 data-[state=active]:text-foodie-green">
             Donationer
           </TabsTrigger>
           <TabsTrigger value="myDonations" className="data-[state=active]:bg-foodie-purple-light/20 data-[state=active]:text-foodie-purple">
             Mina Donationer
           </TabsTrigger>
         </TabsList>
-        
+
         {/* List View Tab */}
         <TabsContent value="donations" className="space-y-4">
           {/* Search and Filters */}
@@ -258,11 +278,11 @@ const FoodMap = () => {
                 className="pl-9"
               />
             </div>
-            
+
             <div className="space-y-2">
               <div className="flex justify-between">
-                <Label className="text-sm text-gray-600">Distance (miles)</Label>
-                <span className="text-sm font-medium">{distanceFilter[0]} mi</span>
+                <Label className="text-sm text-gray-600">Distance (km)</Label>
+                <span className="text-sm font-medium">{distanceFilter[0]} km</span>
               </div>
               <Slider
                 defaultValue={[3]}
@@ -274,7 +294,7 @@ const FoodMap = () => {
               />
             </div>
           </div>
-          
+
           {/* List of Locations */}
           <div className="space-y-3">
             {filteredLocations.length > 0 ? (
@@ -318,7 +338,7 @@ const FoodMap = () => {
                         ))}
                         {location.items.length > 2 && (
                           <Badge variant="outline" className="text-xs">
-                            +{location.items.length - 2} more
+                            +{location.items.length - 2} fler
                           </Badge>
                         )}
                       </div>
@@ -330,10 +350,10 @@ const FoodMap = () => {
               <div className="text-center py-8">
                 <MapPin className="h-12 w-12 text-gray-300 mx-auto mb-2" />
                 <h3 className="text-lg font-medium text-gray-700 mb-1">
-                  No locations found
+                  Inga donationer hittade
                 </h3>
                 <p className="text-gray-500 text-sm">
-                  Try adjusting your search or increasing the distance
+                  Försök sök på andra råvaror eller öka distansen
                 </p>
               </div>
             )}
@@ -342,7 +362,7 @@ const FoodMap = () => {
 
         {/* Map Tab */}
         <TabsContent value="myDonations" className="space-y-4">
-          
+
           {/* Nearby Locations */}
           <div className="space-y-3">
             {filteredLocations.slice(0, 3).map((location) => (
@@ -370,7 +390,7 @@ const FoodMap = () => {
                       <Clock className="h-3 w-3" />
                       <span>{location.hours}</span>
                     </div>
-                    <div className="text-sm font-medium">{location.distance} mi</div>
+                    <div className="text-sm font-medium">{location.distance} km</div>
                   </div>
                 </CardContent>
               </Card>
@@ -399,55 +419,46 @@ const FoodMap = () => {
                     style={{ border: 0 }}
                   ></iframe>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-3">
-
-                <div className="space-y-1">
-                    <h4 className="text-sm font-medium text-gray-700">Tillgänglighet</h4>
-                    <p>{selectedLocation.hours}</p>
-                  </div>
 
 
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-medium text-gray-700">Matvaror</h4>
-                    {selectedLocation.items.map((item, i) => (
-                      <Badge key={i} className={`${getExpireColor(daysFromToday(item.expiryDate))} flex items-center gap-1`}>
-                        <span className="capitalize">{item.name}</span>  
-                        <span className="capitalize">{item.quantity} {item.unit}</span>         
-                        <span className="capitalize ml-auto">{daysFromToday(item.expiryDate)}</span>                
-                      </Badge>
-                    ))}
-                  </div>
+                <div className="space-y-1 flex items-center">
+                  <h4 style={{ paddingRight: "1rem" }} className="text-sm font-medium text-gray-700">Tillgänglighet: </h4>
+                  <p className="text-sm font-medium text-gray-700">{selectedLocation.hours}</p>
                 </div>
-                
-    
-                
-                <div className="flex justify-between gap-3 mt-4">
-                  <Button
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => setDialogOpen(false)}
-                  >
-                    Close
-                  </Button>
-                  <Button className="flex-1 bg-foodie-purple hover:bg-foodie-purple-dark flex gap-1 items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-navigation"
-                    >
-                      <polygon points="3 11 22 2 13 21 11 13 3 11" />
-                    </svg>
-                    Get Directions
-                  </Button>
-                </div>
+
+
+              </div>
+              <div className="space-y-2">
+                {selectedLocation.items.map((item: FridgeItem) => (
+                  <Card key={item.id} className="p-3 flex justify-between items-center">
+                    <div className="flex flex-col">
+                      <div className="font-medium">{item.name}</div>
+                      <div className="text-sm text-gray-500 flex items-center gap-1">
+                        <span>
+                          {item.quantity} {item.unit}
+                        </span>
+                        <span className="mx-1">•</span>
+                        <span className="flex items-center gap-1">
+                          {Math.ceil((new Date(item.expiryDate).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24))} days until expire
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      {!item.reserverad && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => handleAllocate(item)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      )}
+                      {item.reserverad && (
+                        <Lock></Lock>
+                      )}
+                    </div>
+                  </Card>
+                ))}
               </div>
             </>
           )}
