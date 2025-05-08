@@ -72,7 +72,7 @@ const Layout = ({ children, activeTab, onTabChange }: LayoutProps) => {
                 className="data-[state=active]:bg-foodie-orange-light/20 data-[state=active]:text-foodie-orange flex flex-col items-center justify-center text-xs space-y-1 h-full"
               >
                 <ChefHat className="h-5 w-5" />
-                <span>Recipes</span>
+                <span>Recept</span>
               </TabsTrigger>
               <TabsTrigger
                 value="map"
