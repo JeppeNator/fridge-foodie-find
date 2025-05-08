@@ -254,7 +254,7 @@ const FoodMap = () => {
                 <CardContent className="p-4">
                   <div className="text-center space-y-2">
                     <Info className="h-6 w-6 text-foodie-purple mx-auto" />
-                    <h3 className="font-medium">Map Placeholder</h3>
+                    <h3 className="font-medium">Test Placeholder</h3>
                     <p className="text-sm text-gray-600">
                       In a real application, this would display an interactive map 
                       showing the locations of food sources near you.
@@ -414,8 +414,9 @@ const FoodMap = () => {
               <div className="space-y-4">
                 <div className="bg-gray-100 h-40 rounded-md flex items-center justify-center">
                   <div className="text-center">
-                    <MapPin className="h-8 w-8 text-foodie-purple mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">Map preview</p>
+                    <p className="text-sm text-gray-600"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2131.1844304028423!2d12.93845449090742!3d57.713324878934564!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x465aa0a911161ae1%3A0x9810b6e7a1ed4fb1!2sKellgrensgatan%2C%20Bor%C3%A5s!5e0!3m2!1ssv!2sse!4v1746715005043!5m2!1ssv!2sse" 
+                    loading="lazy"></iframe></p>
+                    
                   </div>
                 </div>
                 
