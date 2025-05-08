@@ -59,7 +59,7 @@ const Layout = ({ children, activeTab, onTabChange }: LayoutProps) => {
             onValueChange={onTabChange}
             className="w-full"
           >
-            <TabsList className="w-full grid grid-cols-4 bg-transparent h-16">
+            <TabsList className="w-full grid grid-cols-3 bg-transparent h-16">
               <TabsTrigger
                 value="inventory"
                 className="data-[state=active]:bg-foodie-green-light/20 data-[state=active]:text-foodie-green flex flex-col items-center justify-center text-xs space-y-1 h-full"
@@ -80,13 +80,6 @@ const Layout = ({ children, activeTab, onTabChange }: LayoutProps) => {
               >
                 <MapPin className="h-5 w-5" />
                 <span>Find Food</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="request"
-                className="data-[state=active]:bg-foodie-orange/20 data-[state=active]:text-foodie-orange-dark flex flex-col items-center justify-center text-xs space-y-1 h-full"
-              >
-                <ShoppingCart className="h-5 w-5" />
-                <span>Request</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
