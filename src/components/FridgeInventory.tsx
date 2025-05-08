@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -43,50 +44,6 @@ interface FridgeItem {
 interface CategoryIcon {
   [key: string]: JSX.Element;
 }
-
-// Initial Data
-const initialItems: FridgeItem[] = [
-  {
-    id: "1",
-    name: "Milk",
-    category: "Dairy",
-    quantity: 1,
-    unit: "liter",
-    expiryDate: "2023-06-01",
-  },
-  {
-    id: "2",
-    name: "Chicken Breast",
-    category: "Meat",
-    quantity: 500,
-    unit: "g",
-    expiryDate: "2023-05-28",
-  },
-  {
-    id: "3",
-    name: "Spinach",
-    category: "Vegetables",
-    quantity: 200,
-    unit: "g",
-    expiryDate: "2023-05-25",
-  },
-  {
-    id: "4",
-    name: "Eggs",
-    category: "Dairy",
-    quantity: 6,
-    unit: "pcs",
-    expiryDate: "2023-06-10",
-  },
-  {
-    id: "5",
-    name: "Tomatoes",
-    category: "Vegetables",
-    quantity: 4,
-    unit: "pcs",
-    expiryDate: "2023-05-30",
-  },
-];
 
 const categories = ["Dairy", "Meat", "Vegetables", "Fruits", "Grains", "Other"];
 const units = ["g", "kg", "ml", "liter", "pcs", "tbsp", "tsp", "cup"];
@@ -229,7 +186,7 @@ function getCategoryColor(category: string): string {
 }
 
 const FridgeInventory = () => {
-  const [items, setItems] = useState<FridgeItem[]>(initialItems);
+  const [items, setItems] = useState<FridgeItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<FridgeItem | null>(null);
@@ -241,7 +198,44 @@ const FridgeInventory = () => {
     expiryDate: new Date().toISOString().split("T")[0],
   });
 
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
   const { toast } = useToast();
+
+  const fetchItems = async () => {
+    try {
+      const response = await fetch("http://localhost:5036/api/FridgeItem");
+      if (!response.ok) throw new Error("Failed to fetch items");
+      const data = await response.json();
+      setItems(data);
+    } catch (error) {
+      console.error("Error fetching items:", error);
+    }
+  };
+
+  const addItem = async () => {
+    try {
+      const response = await fetch("http://localhost:5036/api/FridgeItem", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: newItem.name,
+          category: newItem.category,
+          quantity: newItem.quantity,
+          unit: newItem.unit,
+          expiryDate: newItem.expiryDate,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to post items");
+    } catch (error) {
+      console.error("Error fetching items:", error);
+    }
+  };
 
   // Filter items based on search query
   const filteredItems = items.filter((item) =>
@@ -260,7 +254,7 @@ const FridgeInventory = () => {
     {}
   );
 
-  const handleAddOrUpdateItem = () => {
+  const handleAddOrUpdateItem = async () => {
     if (!newItem.name || !newItem.category || !newItem.quantity || !newItem.unit) {
       toast({
         title: "Missing information",
@@ -272,20 +266,24 @@ const FridgeInventory = () => {
 
     if (editItem) {
       // Update existing item
-      setItems(
-        items.map((item) =>
-          item.id === editItem.id
-            ? {
-                ...item,
-                name: newItem.name || item.name,
-                category: newItem.category || item.category,
-                quantity: newItem.quantity || item.quantity,
-                unit: newItem.unit || item.unit,
-                expiryDate: newItem.expiryDate || item.expiryDate,
-              }
-            : item
-        )
-      );
+      let currentItem = items.find(i => i.id === editItem.id);
+      const response = await fetch("http://localhost:5036/api/FridgeItem/"+editItem.id, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+                id: editItem.id,
+                name: newItem.name || currentItem.name,
+                category: newItem.category || currentItem.category,
+                quantity: newItem.quantity || currentItem.quantity,
+                unit: newItem.unit || currentItem.unit,
+                expiryDate: newItem.expiryDate || currentItem.expiryDate,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to post items");
+
       toast({
         title: "Item updated",
         description: `${newItem.name} has been updated in your fridge`,
@@ -293,17 +291,22 @@ const FridgeInventory = () => {
     } else {
       // Add new item
       const newId = Math.random().toString(36).substr(2, 9);
-      setItems([
-        ...items,
-        {
-          id: newId,
-          name: newItem.name || "",
-          category: newItem.category || "Other",
-          quantity: newItem.quantity || 1,
-          unit: newItem.unit || "pcs",
-          expiryDate: newItem.expiryDate || new Date().toISOString().split("T")[0],
+      const response = await fetch("http://localhost:5036/api/FridgeItem", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      ]);
+        body: JSON.stringify({
+            id: newId,
+            name: newItem.name || "",
+            category: newItem.category || "Other",
+            quantity: newItem.quantity || 1,
+            unit: newItem.unit || "pcs",
+            expiryDate: newItem.expiryDate || new Date().toISOString().split("T")[0],
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to post items");
       toast({
         title: "Item added",
         description: `${newItem.name} has been added to your fridge`,
@@ -320,15 +323,29 @@ const FridgeInventory = () => {
     });
     setEditItem(null);
     setDialogOpen(false);
+    await fetchItems();
   };
 
-  const handleDeleteItem = (id: string) => {
+  const handleDeleteItem = async (id: string) => {
     const itemToDelete = items.find((item) => item.id === id);
-    setItems(items.filter((item) => item.id !== id));
+
+    const response = await fetch("http://localhost:5036/api/FridgeItem/"+itemToDelete.id, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+              id: itemToDelete.id,
+      }),
+    });
+
+    if (!response.ok) throw new Error("Failed to delete items");
+
     toast({
       title: "Item removed",
       description: `${itemToDelete?.name} has been removed from your fridge`,
     });
+    await fetchItems();
   };
 
   const handleEditClick = (item: FridgeItem) => {
