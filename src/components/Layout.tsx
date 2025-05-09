@@ -18,7 +18,7 @@ const Layout = ({ children, activeTab, onTabChange }: LayoutProps) => {
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Refrigerator className="h-6 w-6 text-foodie-green-dark" />
+            <img src="src/img/logga2.png" alt="Refrigerator icon" className="h-6 w-6" />
             <h1 className="text-xl font-bold bg-gradient-to-r from-foodie-green-dark to-foodie-purple text-transparent bg-clip-text">
               Svinnsäker
             </h1>

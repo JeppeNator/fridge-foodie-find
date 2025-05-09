@@ -25,6 +25,7 @@ import {
   Edit,
   Trash2,
   Search,
+  HandCoins,
   Calendar,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -275,7 +276,7 @@ const FridgeInventory = () => {
   };
 
   // Filter items based on search query
-  const filteredItems = items.filter((item) =>
+  const filteredItems = items.filter((item) => !item.reserved &&
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -310,16 +311,17 @@ const FridgeInventory = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: editItem.id,
-          name: newItem.name || currentItem.name,
-          category: newItem.category || currentItem.category,
-          quantity: newItem.quantity || currentItem.quantity,
-          unit: newItem.unit || currentItem.unit,
-          expiryDate: newItem.expiryDate || currentItem.expiryDate,
+                id: editItem.id,
+                name: newItem.name || currentItem.name,
+                category: newItem.category || currentItem.category,
+                quantity: newItem.quantity || currentItem.quantity,
+                unit: newItem.unit || currentItem.unit,
+                expiryDate: newItem.expiryDate || currentItem.expiryDate,
+                reserved: newItem.reserved || currentItem.reserved,
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to post items");
+      if (!response.ok) throw new Error("Failed to update items");
 
       toast({
         title: "Matvara uppdaterad",
@@ -334,12 +336,13 @@ const FridgeInventory = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: newId,
-          name: newItem.name || "",
-          category: newItem.category || "Other",
-          quantity: newItem.quantity || 1,
-          unit: newItem.unit || "pcs",
-          expiryDate: newItem.expiryDate || new Date().toISOString().split("T")[0],
+            id: newId,
+            name: newItem.name || "",
+            category: newItem.category || "Other",
+            quantity: newItem.quantity || 1,
+            unit: newItem.unit || "pcs",
+            expiryDate: newItem.expiryDate || new Date().toISOString().split("T")[0],
+            reserved: newItem.reserved || false,
         }),
       });
 
@@ -385,6 +388,48 @@ const FridgeInventory = () => {
     await fetchItems();
   };
 
+  const handleDonateClick = async (currentItem: FridgeItem) => {
+    const response = await fetch("http://localhost:5036/api/FridgeItem/"+currentItem.id, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+                id: currentItem.id,
+                name: currentItem.name,
+                category: currentItem.category,
+                quantity: currentItem.quantity,
+                unit: currentItem.unit,
+                expiryDate: currentItem.expiryDate,
+                reserved: true,
+        }),
+      });
+
+      const response2 = await fetch("http://localhost:5036/api/Location/1", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+                id: currentItem.id,
+                name: currentItem.name,
+                category: currentItem.category,
+                quantity: currentItem.quantity,
+                unit: currentItem.unit,
+                expiryDate: currentItem.expiryDate,
+                reserved: false,
+        }),
+      });
+
+      if (!response.ok || !response2.ok) throw new Error("Failed to update items");
+
+      toast({
+        title: "Matvara utlagd för donation",
+        description: `${currentItem.name} har blivit utlagd för donation`,
+      });
+      await fetchItems();
+  };
+
   const handleEditClick = (item: FridgeItem) => {
     setEditItem(item);
     setNewItem({
@@ -393,6 +438,7 @@ const FridgeInventory = () => {
       quantity: item.quantity,
       unit: item.unit,
       expiryDate: item.expiryDate,
+      reserved: item.reserved,
     });
     setDialogOpen(true);
   };
@@ -405,6 +451,7 @@ const FridgeInventory = () => {
       quantity: 1,
       unit: "pcs",
       expiryDate: new Date().toISOString().split("T")[0],
+      reserved: false,
     });
     setDialogOpen(true);
   };
@@ -496,6 +543,13 @@ const FridgeInventory = () => {
                   </div>
                 </div>
                 <div className="flex gap-2">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => handleDonateClick(item)}
+                  >
+                    <HandCoins className="h-4 w-4" />
+                  </Button>
                   <Button
                     size="icon"
                     variant="ghost"

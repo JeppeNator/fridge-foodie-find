@@ -247,7 +247,7 @@ const RecipeRecommendations = () => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <ChefHat className="w-6 h-6 text-foodie-orange" />
-          <h1 className="foodie-heading">Recept</h1>
+          <h1 className="text-xl font-semibold leading-none">Recept</h1>
         </div>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
