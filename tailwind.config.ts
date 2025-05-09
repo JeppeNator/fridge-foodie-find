@@ -70,7 +70,7 @@ export default {
 						dark: '#047857'
 					},
 					orange: {
-						light: '#FB923C',
+						light: '#fadfc0',
 						DEFAULT: '#F97316',
 						dark: '#C2410C'
 					},
@@ -80,7 +80,7 @@ export default {
 						dark: '#7E69AB'
 					},
 					red: {
-						light: '#FA6464',
+						light: '#f7cac3',
 						DEFAULT: '#FC1703',
 						dark: '#A80202'
 					}
