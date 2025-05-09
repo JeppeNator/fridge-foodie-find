@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Refrigerator, ChefHat, MapPin, ShoppingCart } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 import React from "react";
 
 interface LayoutProps {
@@ -12,6 +13,13 @@ interface LayoutProps {
 }
 
 const Layout = ({ children, activeTab, onTabChange }: LayoutProps) => {
+const { toast } = useToast();
+const handleSettingCLick = () => {
+  toast({
+        title: "Mjölk går ut snart",
+        description: "Var snäll att drick upp eller donera",
+      });
+}
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-foodie-green-light/10 to-white">
       {/* Header */}
@@ -27,7 +35,7 @@ const Layout = ({ children, activeTab, onTabChange }: LayoutProps) => {
             variant="ghost"
             size="icon"
             className="text-gray-600"
-            onClick={() => {}}
+            onClick={handleSettingCLick}
           >
             <span className="sr-only">Settings</span>
             <svg
