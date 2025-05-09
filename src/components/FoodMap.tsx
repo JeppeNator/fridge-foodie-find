@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Search, Clock, Edit, Lock } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
+import { useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
@@ -84,6 +85,12 @@ const mockLocations: Location[] = [
   },
 ];
 
+const staticMapLinks: { [key: string]: string } = {
+  "1": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4260.975085651297!2d12.936614277180308!3d57.7251620738776!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x465aa0aee8721f03%3A0xe1fd8213c5fc0bc3!2zSMO2Z3Nrb2xhbiBpIEJvcsOlcw!5e0!3m2!1ssv!2sse!4v1746728034326!5m2!1ssv!2sse",
+  "2": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4264.138100583773!2d12.827689377178638!3d57.698296673865954!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46500838065dc9f5%3A0xdbea3dda02f559aa!2sCentiro%20Solutions%20AB!5e0!3m2!1ssv!2sse!4v1746728060507!5m2!1ssv!2sse",
+  // add more entries as needed
+};
+
 // Types
 interface Location {
   id: string;
@@ -121,7 +128,6 @@ const daysFromToday = (dateString: string) => {
 
 const getTypeColor = (expiryDate: string) => {
   let days = daysFromToday(expiryDate)
-  console.log(days)
   if (days < 2) {
     return "bg-foodie-red-light/20 text-foodie-red-dark";
   }
@@ -132,7 +138,6 @@ const getTypeColor = (expiryDate: string) => {
 };
 
 const getExpireColor = (expiresIn: number) => {
-  console.log(expiresIn)
   if (expiresIn < 2) {
     return "bg-foodie-red-light/20 text-foodie-red-dark";
   }
@@ -254,6 +259,21 @@ const FoodMap = () => {
       location.address.toLowerCase().includes(searchQuery.toLowerCase()) &&
       location.distance <= distanceFilter[0]
   ); //ToDo: fiter on items
+
+  useEffect(() => {
+    fetchLocations();
+  }, []);
+
+  const fetchLocations = async () => {
+    try {
+      const response = await fetch("http://localhost:5036/api/Location");
+      if (!response.ok) throw new Error("Failed to fetch items");
+      const data = await response.json();
+      setLocations(data);
+    } catch (error) {
+      console.error("Error fetching items:", error);
+    }
+  };
 
   const handleLocationClick = (location: typeof mockLocations[0]) => {
     setSelectedLocation(location);
@@ -444,7 +464,7 @@ const FoodMap = () => {
               <div className="space-y-4">
                 <div className="bg-gray-100 h-40 rounded-md overflow-hidden">
                   <iframe
-                    src={selectedLocation.maplink}
+                    src={staticMapLinks[selectedLocation.id]}
                     loading="lazy"
                     className="w-full h-full"
                     style={{ border: 0 }}

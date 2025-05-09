@@ -38,7 +38,7 @@ interface FridgeItem {
   quantity: number;
   unit: string;
   expiryDate: string;
-  reserverad: boolean;
+  reserved: boolean;
 }
 
 interface CategoryIcon {
@@ -54,7 +54,7 @@ const initialItems: FridgeItem[] = [
     quantity: 1,
     unit: "liter",
     expiryDate: "2025-06-01",
-    reserverad: false
+    reserved: false
   },
   {
     id: "2",
@@ -63,7 +63,7 @@ const initialItems: FridgeItem[] = [
     quantity: 500,
     unit: "g",
     expiryDate: "2025-05-28",
-    reserverad: false
+    reserved: false
   },
   {
     id: "3",
@@ -72,7 +72,7 @@ const initialItems: FridgeItem[] = [
     quantity: 200,
     unit: "g",
     expiryDate: "2025-05-25",
-    reserverad: false
+    reserved: false
   },
   {
     id: "4",
@@ -81,7 +81,7 @@ const initialItems: FridgeItem[] = [
     quantity: 6,
     unit: "st",
     expiryDate: "2025-06-10",
-    reserverad: false
+    reserved: false
   },
   {
     id: "5",
@@ -90,7 +90,7 @@ const initialItems: FridgeItem[] = [
     quantity: 4,
     unit: "st",
     expiryDate: "2025-05-30",
-    reserverad: false
+    reserved: false
   },
 ];
 
