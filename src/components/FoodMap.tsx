@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Search, Clock, Edit, Lock } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
-import { useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
@@ -26,31 +25,31 @@ const mockLocations: Location[] = [
     distance: 0.8,
     items: [
       {
-        id:"1",
+        id: "1",
         name: "Gurka",
         quantity: 1,
         category: "Sallad",
         unit: "st",
         expiryDate: "2025-05-28",
-        reserved:false
+        reserved: true
       },
       {
-        id:"2",
+        id: "2",
         name: "Ris",
         quantity: 100,
         category: "Sallad",
         unit: "korn",
         expiryDate: "2025-05-09",
-        reserved:false
+        reserved: false
       },
       {
-        id:"3",
+        id: "3",
         name: "Pasta",
         quantity: 5,
         category: "Sallad",
         unit: "spagett",
         expiryDate: "2025-05-12",
-        reserved:false
+        reserved: false
       },
     ],
     hours: "09:00 - 12:00",
@@ -62,22 +61,22 @@ const mockLocations: Location[] = [
     distance: 2.3,
     items: [
       {
-        id:"4",
+        id: "4",
         name: "Kaffe",
         quantity: 5,
         category: "Sallad",
         unit: "liter",
         expiryDate: "2025-05-28",
-        reserved:false
+        reserved: true
       },
       {
-        id:"5",
+        id: "5",
         name: "Köttbullemacka",
         quantity: 2,
         category: "Sallad",
         unit: "st",
         expiryDate: "2025-05-10",
-        reserved:false
+        reserved: false
       },
     ],
     hours: "15:00 - 17:00",
@@ -280,18 +279,15 @@ const FoodMap = () => {
     setDialogOpen(true);
   };
 
-  const [data, setData] = useState({ name: 'John', age: 30 });
-
-  const updateName = () => {
-    setData(prev => ({ ...prev, name: 'Jane' }));
-  };
-
-  const handleAllocate = (itemToUpdate: FridgeItem) => {
-    const updatedItems = selectedLocation.items.map(item =>
+  const handleAllocate = async (itemToUpdate: FridgeItem) => {
+    const updatedItems = selectedLocation?.items.map(item =>
       item.name === itemToUpdate.name
-        ? { ...item, reserverad: true } // or whatever you want to change
+        ? { ...item, reserved: true } // or whatever you want to change
         : item
     );
+
+    if(!updatedItems)
+      return;
 
     setSelectedLocation(prev => ({
       ...prev,
@@ -378,8 +374,6 @@ const FoodMap = () => {
                       <div className="text-sm text-gray-600 flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         <span>{location.hours}</span>
-                        <span className="mx-1">•</span>
-                        <span>{location.hours}</span>
                       </div>
                       <div className="mt-1 flex flex-wrap gap-1">
                         {location.items.slice(0, 2).map((item, i) => (
@@ -414,36 +408,76 @@ const FoodMap = () => {
         {/* Map Tab */}
         <TabsContent value="myDonations" className="space-y-4">
 
-          {/* Nearby Locations */}
-          <div className="space-y-3">
-            {filteredLocations.slice(0, 3).map((location) => (
-              <Card
-                key={location.id}
-                className="hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => handleLocationClick(location)}
-              >
-                <CardContent className="p-3">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <div className="font-medium">{location.address}</div>
-                      <div className="text-sm text-gray-500 flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        <span>{location.address}</span>
-                      </div>
-                    </div>
-                    <Badge className={`${getTypeColor(location.address)} flex items-center gap-1`}>
-                      {getTypeIcon(location.address)}
-                      <span className="capitalize">{location.address}</span>
-                    </Badge>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600"></span>
+            <h3 className="foodie-subheading">Att hämta</h3>
+          </div>
+          <div className="space-y-2">
+            {locations.filter(x => x.id !== "1").flatMap(x=> x.items).filter(x => x.reserved).map((item: FridgeItem) => (
+              <Card key={item.id} className="p-3 flex justify-between items-center">
+                <div className="flex flex-col">
+                  <div className="font-medium">{item.name}</div>
+                  <div className="text-sm text-gray-500 flex items-center gap-1">
+                    <span>
+                      {item.quantity} {item.unit}
+                    </span>
+                    <span className="mx-1">•</span>
+                    <span className="flex items-center gap-1">
+                      {Math.ceil((new Date(item.expiryDate).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24))} dagar till utgångsdatum
+                    </span>
                   </div>
-                  <div className="mt-2 flex justify-between items-center">
-                    <div className="text-sm text-gray-600 flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      <span>{location.hours}</span>
-                    </div>
-                    <div className="text-sm font-medium">{location.distance} km</div>
+                </div>
+                <div className="flex gap-2">
+                  {!item.reserved && (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => handleAllocate(item)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
+                  {item.reserved && (
+                    <Lock></Lock>
+                  )}
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-gray-600"></span>
+            <h3 className="foodie-subheading">Att lämna</h3>
+          </div>
+          <div className="space-y-2">
+            {locations.filter(x => x.id === "1").flatMap(x=> x.items).filter(x => x.reserved).map((item: FridgeItem) => (
+              <Card key={item.id} className="p-3 flex justify-between items-center">
+                <div className="flex flex-col">
+                  <div className="font-medium">{item.name}</div>
+                  <div className="text-sm text-gray-500 flex items-center gap-1">
+                    <span>
+                      {item.quantity} {item.unit}
+                    </span>
+                    <span className="mx-1">•</span>
+                    <span className="flex items-center gap-1">
+                      {Math.ceil((new Date(item.expiryDate).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24))} dagar till utgångsdatum
+                    </span>
                   </div>
-                </CardContent>
+                </div>
+                <div className="flex gap-2">
+                  {!item.reserved && (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => handleAllocate(item)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
+                  {item.reserved && (
+                    <Lock></Lock>
+                  )}
+                </div>
               </Card>
             ))}
           </div>
