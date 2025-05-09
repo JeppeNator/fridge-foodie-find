@@ -53,7 +53,7 @@ const initialItems: FridgeItem[] = [
     category: "Mejeri",
     quantity: 1,
     unit: "liter",
-    expiryDate: "2025-06-01",
+    expiryDate: "2025-05-10",
     reserved: false
   },
   {
@@ -62,7 +62,7 @@ const initialItems: FridgeItem[] = [
     category: "Kött",
     quantity: 500,
     unit: "g",
-    expiryDate: "2025-05-28",
+    expiryDate: "2025-05-15",
     reserved: false
   },
   {
@@ -235,6 +235,15 @@ function getCategoryColor(category: string): string {
   }
 }
 
+function getBackGroundColor(item: FridgeItem): "bg-foodie-red-light" | "bg-foodie-orange-light" | "" {
+  const days = Math.ceil((new Date(item.expiryDate).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24));
+  if (days < 3)
+    return "bg-foodie-red-light";
+  if (days < 7)
+    return "bg-foodie-orange-light";
+  return "";
+}
+
 const FridgeInventory = () => {
   const [items, setItems] = useState<FridgeItem[]>(initialItems);
   const [searchQuery, setSearchQuery] = useState("");
@@ -295,18 +304,18 @@ const FridgeInventory = () => {
     if (editItem) {
       // Update existing item
       let currentItem = items.find(i => i.id === editItem.id) as FridgeItem;
-      const response = await fetch("http://localhost:5036/api/FridgeItem/"+editItem.id, {
+      const response = await fetch("http://localhost:5036/api/FridgeItem/" + editItem.id, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-                id: editItem.id,
-                name: newItem.name || currentItem.name,
-                category: newItem.category || currentItem.category,
-                quantity: newItem.quantity || currentItem.quantity,
-                unit: newItem.unit || currentItem.unit,
-                expiryDate: newItem.expiryDate || currentItem.expiryDate,
+          id: editItem.id,
+          name: newItem.name || currentItem.name,
+          category: newItem.category || currentItem.category,
+          quantity: newItem.quantity || currentItem.quantity,
+          unit: newItem.unit || currentItem.unit,
+          expiryDate: newItem.expiryDate || currentItem.expiryDate,
         }),
       });
 
@@ -325,12 +334,12 @@ const FridgeInventory = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            id: newId,
-            name: newItem.name || "",
-            category: newItem.category || "Other",
-            quantity: newItem.quantity || 1,
-            unit: newItem.unit || "pcs",
-            expiryDate: newItem.expiryDate || new Date().toISOString().split("T")[0],
+          id: newId,
+          name: newItem.name || "",
+          category: newItem.category || "Other",
+          quantity: newItem.quantity || 1,
+          unit: newItem.unit || "pcs",
+          expiryDate: newItem.expiryDate || new Date().toISOString().split("T")[0],
         }),
       });
 
@@ -357,13 +366,13 @@ const FridgeInventory = () => {
   const handleDeleteItem = async (id: string) => {
     const itemToDelete = items.find((item) => item.id === id) as FridgeItem;
 
-    const response = await fetch("http://localhost:5036/api/FridgeItem/"+itemToDelete.id, {
+    const response = await fetch("http://localhost:5036/api/FridgeItem/" + itemToDelete.id, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-              id: itemToDelete.id,
+        id: itemToDelete.id,
       }),
     });
 
@@ -472,7 +481,8 @@ const FridgeInventory = () => {
                 ? new Date(a.expiryDate).getTime() - new Date(b.expiryDate).getTime()
                 : new Date(b.expiryDate).getTime() - new Date(a.expiryDate).getTime()
             ).map((item) => (
-              <Card key={item.id} className="p-3 flex justify-between items-center">
+              <Card
+                key={item.id} className={getBackGroundColor(item) + " p-3 flex justify-between items-center"} >
                 <div className="flex flex-col">
                   <div className="font-medium">{item.name}</div>
                   <div className="text-sm text-gray-500 flex items-center gap-1">
