@@ -255,7 +255,7 @@ const FoodMap = () => {
   // Filter locations based on search and distance
   const filteredLocations = locations.filter(
     (location) =>
-      location.address.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      (searchQuery === "" || location.items.flatMap(x => x.name.toLowerCase()).some(x => x.includes(searchQuery.toLowerCase()))) &&
       location.distance <= distanceFilter[0]
   ); //ToDo: fiter on items
 
