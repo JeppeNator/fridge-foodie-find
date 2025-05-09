@@ -18,36 +18,42 @@ import {
 import React from "react";
 
 // Mock location data
-const mockLocations = [
+const mockLocations: Location[] = [
   {
     id: "1",
     address: "Högskolan i Borås",
     distance: 0.8,
     items: [
       {
+        id:"1",
         name: "Gurka",
-        quantity: "1",
-        Category: "Sallad",
+        quantity: 1,
+        category: "Sallad",
         unit: "st",
-        expiryDate: "2025-05-28"
+        expiryDate: "2025-05-28",
+        reserved:false
       },
       {
+        id:"2",
         name: "Ris",
-        quantity: "100",
-        Category: "Sallad",
+        quantity: 100,
+        category: "Sallad",
         unit: "korn",
-        expiryDate: "2025-05-09"
+        expiryDate: "2025-05-09",
+        reserved:false
       },
       {
+        id:"3",
         name: "Pasta",
-        quantity: "5",
-        Category: "Sallad",
+        quantity: 5,
+        category: "Sallad",
         unit: "spagett",
-        expiryDate: "2025-05-12"
+        expiryDate: "2025-05-12",
+        reserved:false
       },
     ],
     hours: "09:00 - 12:00",
-    mapLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4260.975085651297!2d12.936614277180308!3d57.7251620738776!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x465aa0aee8721f03%3A0xe1fd8213c5fc0bc3!2zSMO2Z3Nrb2xhbiBpIEJvcsOlcw!5e0!3m2!1ssv!2sse!4v1746728034326!5m2!1ssv!2sse"
+    maplink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4260.975085651297!2d12.936614277180308!3d57.7251620738776!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x465aa0aee8721f03%3A0xe1fd8213c5fc0bc3!2zSMO2Z3Nrb2xhbiBpIEJvcsOlcw!5e0!3m2!1ssv!2sse!4v1746728034326!5m2!1ssv!2sse"
   },
   {
     id: "2",
@@ -55,24 +61,49 @@ const mockLocations = [
     distance: 2.3,
     items: [
       {
+        id:"4",
         name: "Kaffe",
-        quantity: "5",
-        Category: "Sallad",
+        quantity: 5,
+        category: "Sallad",
         unit: "liter",
-        expiryDate: "2025-05-28"
+        expiryDate: "2025-05-28",
+        reserved:false
       },
       {
+        id:"5",
         name: "Köttbullemacka",
-        quantity: "2",
-        Category: "Sallad",
+        quantity: 2,
+        category: "Sallad",
         unit: "st",
-        expiryDate: "2025-05-10"
+        expiryDate: "2025-05-10",
+        reserved:false
       },
     ],
     hours: "15:00 - 17:00",
-    mapLink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4264.138100583773!2d12.827689377178638!3d57.698296673865954!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46500838065dc9f5%3A0xdbea3dda02f559aa!2sCentiro%20Solutions%20AB!5e0!3m2!1ssv!2sse!4v1746728060507!5m2!1ssv!2sse"
+    maplink: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4264.138100583773!2d12.827689377178638!3d57.698296673865954!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46500838065dc9f5%3A0xdbea3dda02f559aa!2sCentiro%20Solutions%20AB!5e0!3m2!1ssv!2sse!4v1746728060507!5m2!1ssv!2sse"
   },
 ];
+
+// Types
+interface Location {
+  id: string;
+  address: string;
+  distance: number;
+  items: FridgeItem[];
+  hours: string;
+  maplink: string;
+}
+
+
+interface FridgeItem {
+  id: string;
+  name: string;
+  category: string;
+  quantity: number;
+  unit: string;
+  expiryDate: string;
+  reserved: boolean;
+}
 
 const daysFromToday = (dateString: string) => {
   const today = new Date();
@@ -413,7 +444,7 @@ const FoodMap = () => {
               <div className="space-y-4">
                 <div className="bg-gray-100 h-40 rounded-md overflow-hidden">
                   <iframe
-                    src={selectedLocation.mapLink}
+                    src={selectedLocation.maplink}
                     loading="lazy"
                     className="w-full h-full"
                     style={{ border: 0 }}
@@ -444,7 +475,7 @@ const FoodMap = () => {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      {!item.reserverad && (
+                      {!item.reserved && (
                         <Button
                           size="icon"
                           variant="ghost"
@@ -453,7 +484,7 @@ const FoodMap = () => {
                           <Edit className="h-4 w-4" />
                         </Button>
                       )}
-                      {item.reserverad && (
+                      {item.reserved && (
                         <Lock></Lock>
                       )}
                     </div>
