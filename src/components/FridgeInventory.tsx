@@ -38,11 +38,62 @@ interface FridgeItem {
   quantity: number;
   unit: string;
   expiryDate: string;
+  reserverad: boolean;
 }
 
 interface CategoryIcon {
   [key: string]: JSX.Element;
 }
+
+// Initial Data
+const initialItems: FridgeItem[] = [
+  {
+    id: "1",
+    name: "Mjölk",
+    category: "Mejeri",
+    quantity: 1,
+    unit: "liter",
+    expiryDate: "2025-06-01",
+    reserverad: false
+  },
+  {
+    id: "2",
+    name: "Kycklingbröst",
+    category: "Kött",
+    quantity: 500,
+    unit: "g",
+    expiryDate: "2025-05-28",
+    reserverad: false
+  },
+  {
+    id: "3",
+    name: "Spenat",
+    category: "Grönsaker",
+    quantity: 200,
+    unit: "g",
+    expiryDate: "2025-05-25",
+    reserverad: false
+  },
+  {
+    id: "4",
+    name: "Ägg",
+    category: "Mejeri",
+    quantity: 6,
+    unit: "st",
+    expiryDate: "2025-06-10",
+    reserverad: false
+  },
+  {
+    id: "5",
+    name: "Tomater",
+    category: "Grönsaker",
+    quantity: 4,
+    unit: "st",
+    expiryDate: "2025-05-30",
+    reserverad: false
+  },
+];
+
 
 const categories = ["Mejeri", "Kött", "Grönsaker", "Frukt", "Torrvaror", "Övrigt"];
 const units = ["g", "kg", "ml", "liter", "st"];
@@ -185,7 +236,7 @@ function getCategoryColor(category: string): string {
 }
 
 const FridgeInventory = () => {
-  const [items, setItems] = useState<FridgeItem[]>([]);
+  const [items, setItems] = useState<FridgeItem[]>(initialItems);
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<FridgeItem | null>(null);
@@ -384,7 +435,7 @@ const FridgeInventory = () => {
         }}
         className="text-sm bg-gray-200 px-2 py-1 rounded"
       >
-        Sort: {sortDirection === "desc" ? "↓" : "↑"}
+        Sortering: {sortDirection === "desc" ? "↓" : "↑"}
       </button></div>
 
       {/* No Items State */}
@@ -430,7 +481,7 @@ const FridgeInventory = () => {
                     </span>
                     <span className="mx-1">•</span>
                     <span className="flex items-center gap-1">
-                      {Math.ceil((new Date(item.expiryDate).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24))} days until expire
+                      {Math.ceil((new Date(item.expiryDate).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24))} dagar till utgångsdatum
                     </span>
                   </div>
                 </div>
@@ -463,7 +514,7 @@ const FridgeInventory = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editItem ? "Uppdatera Matvara" : "Lägg Till Ny Matvara"}
+              {editItem ? "Uppdatera matvara" : "Lägg till ny matvara"}
             </DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">

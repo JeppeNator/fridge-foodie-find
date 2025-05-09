@@ -20,7 +20,7 @@ const Layout = ({ children, activeTab, onTabChange }: LayoutProps) => {
           <div className="flex items-center gap-2">
             <Refrigerator className="h-6 w-6 text-foodie-green-dark" />
             <h1 className="text-xl font-bold bg-gradient-to-r from-foodie-green-dark to-foodie-purple text-transparent bg-clip-text">
-              Fridge Foodie
+              Svinnsäker
             </h1>
           </div>
           <Button
@@ -66,7 +66,7 @@ const Layout = ({ children, activeTab, onTabChange }: LayoutProps) => {
                 className="data-[state=active]:bg-foodie-green-light/20 data-[state=active]:text-foodie-green flex flex-col items-center justify-center text-xs space-y-1 h-full"
               >
                 <Refrigerator className="h-5 w-5" />
-                <span>Inventory</span>
+                <span>Matvaror</span>
               </TabsTrigger>
               <TabsTrigger
                 value="recipes"
@@ -80,7 +80,7 @@ const Layout = ({ children, activeTab, onTabChange }: LayoutProps) => {
                 className="data-[state=active]:bg-foodie-purple-light/20 data-[state=active]:text-foodie-purple flex flex-col items-center justify-center text-xs space-y-1 h-full"
               >
                 <MapPin className="h-5 w-5" />
-                <span>Find Food</span>
+                <span>Hitta mat</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>

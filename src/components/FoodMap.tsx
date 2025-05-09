@@ -422,7 +422,7 @@ const FoodMap = () => {
 
 
                 <div className="space-y-1 flex items-center">
-                  <h4 style={{ paddingRight: "1rem" }} className="text-sm font-medium text-gray-700">Tillgänglighet: </h4>
+                  <h4 style={{ paddingRight: "0.2rem" }} className="text-sm font-medium text-gray-700">Tillgänglighet: </h4>
                   <p className="text-sm font-medium text-gray-700">{selectedLocation.hours}</p>
                 </div>
 
@@ -439,7 +439,7 @@ const FoodMap = () => {
                         </span>
                         <span className="mx-1">•</span>
                         <span className="flex items-center gap-1">
-                          {Math.ceil((new Date(item.expiryDate).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24))} days until expire
+                          {Math.ceil((new Date(item.expiryDate).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / (1000 * 60 * 60 * 24))} dagar till utgångsdatum
                         </span>
                       </div>
                     </div>

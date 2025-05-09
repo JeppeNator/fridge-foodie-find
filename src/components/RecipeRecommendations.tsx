@@ -22,6 +22,7 @@ import {
   Search,
   Star,
 } from "lucide-react";
+import React from "react";
 
 // Types
 interface Recipe {
