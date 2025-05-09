@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -30,13 +31,20 @@ interface Recipe {
   name: string;
   image: string;
   prepTime: number;
-  ingredients: string[];
-  matchedIngredients: string[];
-  missingIngredients: string[];
+  ingredients: FridgeItem[];
   difficulty: "Lätt" | "Medel" | "Svår";
   rating: number;
   instructions: string[];
   category: string;
+}
+
+interface FridgeItem {
+  id: string;
+  name: string;
+  category: string;
+  quantity: number;
+  unit: string;
+  expiryDate: string;
 }
 
 // Sample data
@@ -47,14 +55,12 @@ const sampleRecipes: Recipe[] = [
     image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061",
     prepTime: 15,
     ingredients: [
-      "2 Ägg", 
-      "100g Spenat", 
-      "1 Tomater", 
-      "Salt och peppar", 
-      "1 Matsked olivolja"
+      {id:"1", name:"Ägg", category:"", quantity:2, unit:"st", expiryDate:""},
+      {id:"2", name:"Spenat", category:"", quantity:100, unit:"g", expiryDate:""},
+      {id:"3", name:"Tomater", category:"", quantity:1, unit:"st", expiryDate:""},
+      {id:"4", name:"Salt och peppar", category:"", quantity:1, unit:"nypa", expiryDate:""},
+      {id:"5", name:"Olivolja", category:"", quantity:1, unit:"Matsked", expiryDate:""},
     ],
-    matchedIngredients: ["Ägg", "Spenat", "Tomater"],
-    missingIngredients: ["Olivolja"],
     difficulty: "Svår",
     rating: 4.5,
     instructions: [
@@ -74,16 +80,14 @@ const sampleRecipes: Recipe[] = [
     image: "https://images.unsplash.com/photo-1512058564366-18510be2db19",
     prepTime: 25,
     ingredients: [
-      "200g Kycklingbröst",
-      "100g Spenat",
-      "1 Tomater",
-      "1 Lök",
-      "2 Vitlöksklyftor",
-      "1 Matsked sojasås",
-      "2 Matskedar grönsaksfond"
+      {id:"1", name:"Kycklingbröst", category:"", quantity:200, unit:"g", expiryDate:""},
+      {id:"2", name:"Spenat", category:"", quantity:100, unit:"g", expiryDate:""},
+      {id:"3", name:"Tomater", category:"", quantity:1, unit:"st", expiryDate:""},
+      {id:"4", name:"Lök", category:"", quantity:1, unit:"st", expiryDate:""},
+      {id:"5", name:"Vitlök", category:"", quantity:2, unit:"klyftor", expiryDate:""},
+      {id:"6", name:"Matsked sojasås", category:"", quantity:1, unit:"Matsked", expiryDate:""},
+      {id:"7", name:"Matskedar grönsaksfond", category:"", quantity:2, unit:"Matsked", expiryDate:""},
     ],
-    matchedIngredients: ["Kycklingbröst", "Spenat", "Tomat"],
-    missingIngredients: ["Lök", "Vitlök", "Sojasås"],
     difficulty: "Medel",
     rating: 4.2,
     instructions: [
@@ -105,17 +109,15 @@ const sampleRecipes: Recipe[] = [
     image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8",
     prepTime: 20,
     ingredients: [
-      "200g Pasta",
-      "100g Spenat",
-      "2 Tomater",
-      "100ml Grädde",
-      "1 Lök",
-      "2 Vitlöksklyftor",
-      "50g Parmesanost",
-      "Salt och Peppar"
+      {id:"1", name:"Pasta", category:"", quantity:200, unit:"g", expiryDate:""},
+      {id:"2", name:"Spenat", category:"", quantity:100, unit:"g", expiryDate:""},
+      {id:"3", name:"Tomater", category:"", quantity:2, unit:"st", expiryDate:""},
+      {id:"4", name:"Grädde", category:"", quantity:100, unit:"ml", expiryDate:""},
+      {id:"5", name:"Lök", category:"", quantity:1, unit:"matsked", expiryDate:""},
+      {id:"6", name:"Vitlök", category:"", quantity:2, unit:"klyftor", expiryDate:""},
+      {id:"7", name:"Parmesan", category:"", quantity:50, unit:"g", expiryDate:""},
+      {id:"8", name:"Salt och peppar", category:"", quantity:1, unit:"nypa", expiryDate:""},
     ],
-    matchedIngredients: ["Spenat", "Tomater"],
-    missingIngredients: ["Pasta", "Grädde", "Lök", "Vitlök", "Parmesanost"],
     difficulty: "Svår",
     rating: 4.7,
     instructions: [
@@ -137,14 +139,12 @@ const sampleRecipes: Recipe[] = [
     image: "https://images.unsplash.com/photo-1525351484163-7529414344d8",
     prepTime: 25,
     ingredients: [
-      "6 Ägg",
-      "50g Spenat",
-      "1 Tomater",
-      "50g Ost",
-      "Salt och Peppar"
+      {id:"1", name:"Ägg", category:"", quantity:6, unit:"st", expiryDate:""},
+      {id:"2", name:"Spenat", category:"", quantity:50, unit:"g", expiryDate:""},
+      {id:"3", name:"Tomater", category:"", quantity:1, unit:"st", expiryDate:""},
+      {id:"4", name:"Salt och peppar", category:"", quantity:1, unit:"nypa", expiryDate:""},
+      {id:"5", name:"Ost", category:"", quantity:50, unit:"g", expiryDate:""},
     ],
-    matchedIngredients: ["Ägg", "Spenat", "Tomater"],
-    missingIngredients: ["Ost"],
     difficulty: "Lätt",
     rating: 4.3,
     instructions: [
@@ -165,15 +165,13 @@ const sampleRecipes: Recipe[] = [
     image: "https://images.unsplash.com/photo-1505253758473-96b7015fcd40",
     prepTime: 15,
     ingredients: [
-      "200g Kycklingbröst",
-      "100g Spenat",
-      "1 Tomat",
-      "1/2 Gurka",
-      "Olivolja",
-      "Salt och peppar"
+      {id:"1", name:"Kycklingbröst", category:"", quantity:200, unit:"g", expiryDate:""},
+      {id:"2", name:"Spenat", category:"", quantity:100, unit:"g", expiryDate:""},
+      {id:"3", name:"Tomater", category:"", quantity:1, unit:"st", expiryDate:""},
+      {id:"4", name:"Gurka", category:"", quantity:0.5, unit:"st", expiryDate:""},
+      {id:"5", name:"Olivolja", category:"", quantity:1, unit:"ml", expiryDate:""},
+      {id:"6", name:"Salt och peppar", category:"", quantity:1, unit:"nypa", expiryDate:""},
     ],
-    matchedIngredients: ["Kycklingbröst", "Spenat", "Tomat"],
-    missingIngredients: ["Gurka", "Olivolja"],
     difficulty: "Lätt",
     rating: 4.0,
     instructions: [
@@ -190,15 +188,42 @@ const sampleRecipes: Recipe[] = [
 ];
 
 const RecipeRecommendations = () => {
+  const [items, setItems] = useState<FridgeItem[]>([]);
   const [activeTab, setActiveTab] = useState("recommendations");
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  useEffect(() => {
+      fetchItems();
+    }, []);
+
   const openRecipeDetail = (recipe: Recipe) => {
     setSelectedRecipe(recipe);
     setDialogOpen(true);
   };
+
+  const fetchItems = async () => {
+    try {
+      const response = await fetch("http://localhost:5036/api/FridgeItem");
+      if (!response.ok) throw new Error("Failed to fetch items");
+      const data = await response.json();
+      setItems(data);
+    } catch (error) {
+      console.error("Error fetching items:", error);
+    }
+  };
+
+  const GetMatchingItems = (recipe: Recipe) => {
+    return recipe.ingredients.filter(itemA =>
+      items.some(itemB => itemB.name === itemA.name)
+    ).length
+  }
+
+  const IsMatchingItem = (fridgeItem: FridgeItem) => {
+    return items.some(itemB => itemB.name === fridgeItem.name)
+  }
+
 
   const filteredRecipes = sampleRecipes.filter(recipe =>
     recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -213,8 +238,8 @@ const RecipeRecommendations = () => {
 
   // Sort recipes by match percentage (based on matched ingredients)
   const sortedRecipes = [...filteredRecipes].sort((a, b) =>
-    b.matchedIngredients.length / b.ingredients.length -
-    a.matchedIngredients.length / a.ingredients.length
+    GetMatchingItems(b) / b.ingredients.length -
+    GetMatchingItems(a) / a.ingredients.length
   );
 
   return (
@@ -278,12 +303,12 @@ const RecipeRecommendations = () => {
                         <div
                           className="bg-foodie-green h-1.5 rounded-full"
                           style={{
-                            width: `${(recipe.matchedIngredients.length / recipe.ingredients.length) * 100}%`,
+                            width: `${(GetMatchingItems(recipe) / recipe.ingredients.length) * 100}%`,
                           }}
                         ></div>
                       </div>
                       <span className="text-xs text-gray-500">
-                        {Math.round((recipe.matchedIngredients.length / recipe.ingredients.length) * 100)}% träff
+                        {Math.round((GetMatchingItems(recipe) / recipe.ingredients.length) * 100)}% träff
                       </span>
                     </div>
                   </div>
@@ -343,22 +368,23 @@ const RecipeRecommendations = () => {
                       Ingredienser du redan har
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {selectedRecipe.matchedIngredients.map((ingredient) => (
-                        <Badge key={ingredient} variant="secondary" className="bg-foodie-green-light/20 text-foodie-green-dark border-foodie-green-light">
-                          {ingredient}
+                      {selectedRecipe.ingredients.filter(i => IsMatchingItem(i)).map((ingredient) => (
+                        <Badge key={ingredient.id} variant="secondary" className="bg-foodie-green-light/20 text-foodie-green-dark border-foodie-green-light">
+                          {ingredient.name}
                         </Badge>
                       ))}
                     </div>
+                    
 
-                    {selectedRecipe.missingIngredients.length > 0 && (
+                    {selectedRecipe.ingredients.some(i => !IsMatchingItem(i)) && (
                       <div className="mt-4">
                         <h3 className="text-sm font-semibold mb-2">
                         Ingredienser du behöver:
                         </h3>
                         <div className="flex flex-wrap gap-2">
-                          {selectedRecipe.missingIngredients.map((ingredient) => (
-                            <Badge key={ingredient} variant="outline" className="border-gray-300 text-gray-600">
-                              {ingredient}
+                          {selectedRecipe.ingredients.filter(i => !IsMatchingItem(i)).map((ingredient) => (
+                            <Badge key={ingredient.id} variant="outline" className="border-gray-300 text-gray-600">
+                              {ingredient.name}
                             </Badge>
                           ))}
                         </div>
@@ -374,7 +400,7 @@ const RecipeRecommendations = () => {
                     <ul className="list-disc pl-5 space-y-1">
                       {selectedRecipe.ingredients.map((ingredient, index) => (
                         <li key={index} className="text-gray-700">
-                          {ingredient}
+                          {ingredient.quantity} {ingredient.unit} {ingredient.name}
                         </li>
                       ))}
                     </ul>
